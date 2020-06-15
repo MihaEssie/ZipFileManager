@@ -5,10 +5,10 @@
 
 'use strict';
 
+require('dotenv').config();
 const loopback = require('loopback');
 const boot = require('loopback-boot');
 const app = module.exports = loopback();
-require('dotenv'); 
 
 app.start = function() {
   // start the web server

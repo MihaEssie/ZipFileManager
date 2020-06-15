@@ -10,7 +10,9 @@ module.exports = function (Doc) {
     try {
       debug('Starting compresing multiple files upload');
       const files = await HelperService.getFilesFromRequest(ctx.req);
-      debug('Succesfuly uploaded %d files', files.length);
+      HelperService.validateFilesSize(files);
+      HelperService.validateArchiveSize(files);
+      debug('Succesfuly uploaded %d file', files.length);
       return {
         sucesss: true
       }  
