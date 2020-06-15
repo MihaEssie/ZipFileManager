@@ -1,12 +1,26 @@
 'use strict';
 
-module.exports = function(Doc) {
+const debug = require('debug')('server:zip-file-manager:doc');
+debug.log = console.log.bind(console);
+const HelperService = require('../services/helpers.service');
 
-  Doc.compressMultipleFiles = async function(ctx) {
+module.exports = function (Doc) {
 
+  Doc.compressMultipleFiles = async function (ctx) {
+    try {
+      debug('Starting compresing multiple files upload');
+      const files = await HelperService.getFilesFromRequest(ctx.req);
+      debug('Succesfuly uploaded %d files', files.length);
+      return {
+        sucesss: true
+      }  
+    } catch (error) {
+      console.error(error);
+      return Promise.reject(error);
+    };
   };
 
-  Doc.remoteMethod('compressMultipleFiles', {
+  Doc.remoteMethod('compressMultipleFiles', {
     accepts: [
       {
         arg: 'ctx',
@@ -30,5 +44,5 @@ module.exports = function(Doc) {
     },
   });
 };
-    
+
 
