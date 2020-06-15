@@ -11,16 +11,19 @@
     "posttest": "npm run lint && npm audit"
   },
   "dependencies": {
+    "archiver": "^4.0.1",
     "compression": "^1.0.3",
     "cors": "^2.5.2",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
+    "fs": "0.0.1-security",
     "helmet": "^3.10.0",
     "loopback": "^3.22.0",
     "loopback-boot": "^2.6.5",
     "loopback-component-explorer": "^6.2.0",
     "loopback-connector-postgresql": "^5.0.1",
     "multiparty": "^4.2.1",
+    "path": "^0.12.7",
     "serve-favicon": "^2.0.1",
     "strong-error-handler": "^3.0.0"
   },

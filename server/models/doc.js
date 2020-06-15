@@ -13,9 +13,10 @@ module.exports = function (Doc) {
       HelperService.validateFilesSize(files);
       HelperService.validateArchiveSize(files);
       debug('Succesfuly uploaded %d file', files.length);
-      return {
-        sucesss: true
-      }  
+      const zipArchive = await HelperService.archiveFiles(files);
+
+      return zipArchive;
+
     } catch (error) {
       console.error(error);
       return Promise.reject(error);
