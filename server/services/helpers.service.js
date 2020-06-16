@@ -6,8 +6,16 @@ const multiparty = require('multiparty');
 const archiver = require('archiver');
 const path = require('path');
 const fs = require('fs');
+const COS = require('ibm-cos-sdk');
+const cosService = 'cloud-object-storage';
+const cfenv = require('cfenv');
 const MAX_FILE_SIZE = process.env.MAX_FILE_SIZE;
 const MAX_ARCHIVE_SIZE = process.env.MAX_ARCHIVE_SIZE;
+
+let localVCAP = null;
+try { localVCAP = process.env.VCAP_SERVICES || require('./../../local-vcap.json'); } catch (e) {};
+const appEnv = cfenv.getAppEnv({vcap: localVCAP});
+
 
 /**
  * @param {Object} req
@@ -111,9 +119,36 @@ function  configObjectStorage() {
   
     return cos;
 }
+
+/**
+ * 
+ * @param {Object} cos 
+ * @param {String} bucketName 
+ * @param {String} fileName 
+ */
+async function uploadFileToCOS(cos, bucketName, fileName) {
+    debug('Saving %s file in %s bucket', fileName, bucketName);
+    const fileContent = fs.readFileSync(fileName);
+    
+    return new Promise((resolve, reject) => {
+        return cos.putObject({
+            Bucket: bucketName,
+            ACL: 'public-read',
+            Key: fileName,
+            Body: fileContent,
+            ContentType: 'application/zip',
+        }, (err,result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+}
+
 module.exports = {
     getFilesFromRequest,
     validateFilesSize,
     validateArchiveSize,
     archiveFiles
+    configObjectStorage,
+    uploadFileToCOS
 };
