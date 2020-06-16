@@ -146,7 +146,23 @@ async function uploadFileToCOS(cos, bucketName, fileName) {
             else resolve(result);
         });
     });
-}
+};
+
+/**
+ * 
+ * @param {Object} res 
+ * @param {String} fileName 
+ */
+function configAPIResponse(res, fileName) {
+    debug('Configure API Response by adding headers to send zip file');
+    const fileContent = fs.readFileSync(fileName);
+    res.set('Content-Type', 'application/force-download');
+    res.set('Content-Type', 'application/zip');
+    res.set('Content-Type', 'application/download');
+    res.set('Content-Disposition', `attachment;filename=${fileName}`);
+    res.set('Content-Transfer-Encoding', 'binary');
+    res.send(fileContent);
+};
 
 module.exports = {
     getFilesFromRequest,
@@ -154,5 +170,6 @@ module.exports = {
     validateArchiveSize,
     archiveFiles,
     configObjectStorage,
-    uploadFileToCOS
+    uploadFileToCOS,
+    configAPIResponse
 };
