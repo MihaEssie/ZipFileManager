@@ -2,7 +2,9 @@
 
 const debug = require('debug')('server:zip-file-manager:helpers');
 debug.log = console.log.bind(console);
+
 const multiparty = require('multiparty');
+const moment = require('moment');
 const archiver = require('archiver');
 const path = require('path');
 const fs = require('fs');
@@ -70,11 +72,12 @@ function validateArchiveSize(files) {
  * @param {Array} files
  * @returns {Promise}
  */
-const archiveFiles = (files) => {
+const archiveFiles = async (files, userId) => {
     debug('Starting archiving uploded files');
     const archive = archiver('zip', { zlib: { level: 9 } });
-    const fileName = path.join(__dirname, '../../docs', 'example.zip');
-    const output = fs.createWriteStream(fileName);
+    const currentDate = moment(new Date()).format('DD-MM-YYYY');
+    const archiveName = `${userId}-archive-${currentDate}.zip`
+    const output = fs.createWriteStream(archiveName);
 
     return new Promise((resolve, reject) => {
         archive
@@ -91,13 +94,14 @@ const archiveFiles = (files) => {
         output.on('close', () => {
             debug('Zipped %d total bytes', archive.pointer());
             debug('Archiver has been finalized and the output file descriptor has closed.');
-            resolve(fileName);
+            resolve(archiveName);
             })
             .on('end', () => {
                 debug('Data has been drained');
             });
         archive.finalize();
-        debug('Succesfuly archived %d files, archive name: ', files.length, fileName);
+        resolve(archiveName);
+        debug('Succesfuly archived %d files, archive name: ', files.length, archiveName);
     });
 };
 
@@ -148,7 +152,7 @@ module.exports = {
     getFilesFromRequest,
     validateFilesSize,
     validateArchiveSize,
-    archiveFiles
+    archiveFiles,
     configObjectStorage,
     uploadFileToCOS
 };
