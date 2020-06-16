@@ -93,6 +93,24 @@ const archiveFiles = (files) => {
     });
 };
 
+
+function  configObjectStorage() {
+    debug('Start config Cloud Object Storage');
+    const COS_ENDPOINT = process.env.COS_ENDPOINT;
+    const COS_IBMAUTHENDPOINT = process.env.COS_IBMAUTHENDPOINT;
+    const cosCreds = appEnv.services[cosService][0].credentials;
+    const config = {
+      endpoint: COS_ENDPOINT,
+      apiKeyId: cosCreds.apikey,
+      ibmAuthEndpoint: COS_IBMAUTHENDPOINT,
+      serviceInstanceId: cosCreds.resource_instance_id,
+    };
+  
+    const cos = new COS.S3(config);
+    debug('End config Cloud Object Storage');
+  
+    return cos;
+}
 module.exports = {
     getFilesFromRequest,
     validateFilesSize,
