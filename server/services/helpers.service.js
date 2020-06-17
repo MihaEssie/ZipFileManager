@@ -6,11 +6,11 @@ debug.log = console.log.bind(console);
 const multiparty = require('multiparty');
 const moment = require('moment');
 const archiver = require('archiver');
-const path = require('path');
 const fs = require('fs');
 const COS = require('ibm-cos-sdk');
 const cosService = 'cloud-object-storage';
 const cfenv = require('cfenv');
+const uuid = require('uuid/v4');
 const MAX_FILE_SIZE = process.env.MAX_FILE_SIZE;
 const MAX_ARCHIVE_SIZE = process.env.MAX_ARCHIVE_SIZE;
 
@@ -26,13 +26,20 @@ const appEnv = cfenv.getAppEnv({vcap: localVCAP});
 const getFilesFromRequest = (req) => new Promise((resolve, reject) => {
     const form = new multiparty.Form();
     form.parse(req, (err, fields, files) => {
-        let key = files !== undefined ? Object.keys(files)[0] : undefined;
-        if (typeof files === undefined) {
+        if (Object.keys(files).length === 0 || !fields.userName || fields.userName[0] === '') {
             const error = new Error('Bad Request Error');
             error.statusCode = 400;
-            error.name = 'Missing required files';
+            error.name = 'Missing required files and userName';
             reject(error);
-        } else resolve(files[key]);
+        } else {
+            const userName = fields.userName[0];
+            const userId = _createUserId(userName);
+            let key = Object.keys(files)[0];
+            resolve({
+                files: files[key],
+                userId
+                });
+        }
         if (err) reject(err);
     });
 });
@@ -47,7 +54,7 @@ function validateFilesSize(files) {
     if (invalidFiles.length) {
         const error = new Error('Upload failed because exceeds the MAX file size(250MB) allowed per file');
         error.statusCode = 403;
-        error.name = 'File Size Limit Exceeded'
+        error.name = 'File Size Limit Exceeded';
         throw error;
     }
 };
@@ -76,8 +83,8 @@ const archiveFiles = async (files, userId) => {
     debug('Starting archiving uploded files');
     const archive = archiver('zip', { zlib: { level: 9 } });
     const currentDate = moment(new Date()).format('DD-MM-YYYY');
-    const archiveName = `${userId}-archive-${currentDate}.zip`
-    const output = fs.createWriteStream(archiveName);
+    const archiveName = `${userId}-archive-${currentDate}.zip`;
+    let output = fs.createWriteStream(archiveName);
 
     return new Promise((resolve, reject) => {
         archive
@@ -100,7 +107,6 @@ const archiveFiles = async (files, userId) => {
                 debug('Data has been drained');
             });
         archive.finalize();
-        resolve(archiveName);
         debug('Succesfuly archived %d files, archive name: ', files.length, archiveName);
     });
 };
@@ -164,6 +170,10 @@ function configAPIResponse(res, fileName) {
     res.send(fileContent);
 };
 
+function _createUserId(userName) {
+    return `${userName}-${uuid()}`;
+}
+
 module.exports = {
     getFilesFromRequest,
     validateFilesSize,
@@ -171,5 +181,5 @@ module.exports = {
     archiveFiles,
     configObjectStorage,
     uploadFileToCOS,
-    configAPIResponse
+    configAPIResponse,
 };

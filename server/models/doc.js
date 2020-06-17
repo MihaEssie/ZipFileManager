@@ -11,21 +11,22 @@ module.exports = function (Doc) {
   Doc.archiveMultipleFiles = async function (ctx, res) {
     try {
       debug('Starting compresing multiple files upload');
-      const userId = 'Miha'; // to do: add token and take the userId
-      const files = await HelperService.getFilesFromRequest(ctx.req);
-      HelperService.validateFilesSize(files);
-      HelperService.validateArchiveSize(files);
 
-      debug('Succesfully uploaded %d file', files.length);
-      const zipArchiveName = await HelperService.archiveFiles(files, userId);
+      const result = await HelperService.getFilesFromRequest(ctx.req);
+      HelperService.validateFilesSize(result.files);
+      HelperService.validateArchiveSize(result.files);
+
+      debug('Succesfully uploaded %d file', result.files.length);
+      const zipArchiveName = await HelperService.archiveFiles(result.files, result.userId);
 
       debug('Saving archive into Cloud Object Storage');
       const cos = HelperService.configObjectStorage();
       const uploadedFilePath = await HelperService.uploadFileToCOS(cos, ARCHIVES_BUCKET_NAME, zipArchiveName);
-      debug('Succesfully uploaded archive file to Cloud Object Storage - path: %s for userId: %s', uploadedFilePath, userId);
+      debug('Succesfully uploaded archive file to Cloud Object Storage - path: %s for userId: %s', uploadedFilePath, result.userId);
 
-      return HelperService.configAPIResponse(res, zipArchiveName);
-
+      const response = HelperService.configAPIResponse(res, zipArchiveName);
+      debug('Succesfully sent archive: %s for user: %s', zipArchiveName, result.userId);
+      return response;
     } catch (error) {
       console.error(error);
       return Promise.reject(error);
