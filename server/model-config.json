@@ -42,7 +42,7 @@
       "remoting": {
         "sharedMethods": {
           "*": false,
-          "compressMultipleFiles": true
+          "archiveMultipleFiles": true
         }
       }
     }
