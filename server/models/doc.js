@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 'use strict';
 
 const debug = require('debug')('server:zip-file-manager:doc');
@@ -6,9 +7,8 @@ debug.log = console.log.bind(console);
 const HelperService = require('../services/helpers.service');
 const ARCHIVES_BUCKET_NAME = process.env.ARCHIVES_BUCKET_NAME;
 
-module.exports = function (Doc) {
-
-  Doc.archiveMultipleFiles = async function (ctx, res) {
+module.exports = function(Doc) {
+  Doc.archiveMultipleFiles = async function(ctx, res) {
     try {
       debug('Starting compresing multiple files upload');
 
@@ -38,7 +38,7 @@ module.exports = function (Doc) {
       {
         arg: 'ctx',
         type: 'object',
-        http: function (ctx) {
+        http: function(ctx) {
           return ctx;
         },
       },
@@ -47,8 +47,8 @@ module.exports = function (Doc) {
         type: 'object',
         http: {
           source: 'res',
-        }
-      }
+        },
+      },
     ],
     returns: [
       {
@@ -64,5 +64,4 @@ module.exports = function (Doc) {
     },
   });
 };
-
 
