@@ -4,3 +4,4 @@
 require('./api/docs.spec');
 
 // unit
+require('./unit/docs.spec');

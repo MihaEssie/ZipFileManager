@@ -28,7 +28,6 @@
     "loopback-connector-postgresql": "^5.0.1",
     "moment": "^2.26.0",
     "multiparty": "^4.2.1",
-    "path": "^0.12.7",
     "serve-favicon": "^2.0.1",
     "strong-error-handler": "^3.0.0"
   },
