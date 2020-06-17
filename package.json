@@ -8,7 +8,8 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
-    "posttest": "npm run lint && npm audit"
+    "test": "./node_modules/.bin/mocha 'test/test.js' --exit",
+    "posttest": "npm run lint"
   },
   "dependencies": {
     "archiver": "^4.0.1",
@@ -27,13 +28,15 @@
     "loopback-connector-postgresql": "^5.0.1",
     "moment": "^2.26.0",
     "multiparty": "^4.2.1",
-    "path": "^0.12.7",
     "serve-favicon": "^2.0.1",
     "strong-error-handler": "^3.0.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
     "eslint": "^3.17.1",
-    "eslint-config-loopback": "^8.0.0"
+    "eslint-config-loopback": "^8.0.0",
+    "supertest": "^4.0.2"
   },
   "repository": {
     "type": "",
