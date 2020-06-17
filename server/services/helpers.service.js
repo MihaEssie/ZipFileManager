@@ -148,7 +148,7 @@ async function uploadFileToCOS(cos, bucketName, fileName) {
       ContentType: 'application/zip',
     }, (err, result) => {
       if (err) reject(err);
-      else resolve(result);
+      else resolve();
     });
   });
 };

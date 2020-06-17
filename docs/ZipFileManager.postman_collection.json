@@ -1,0 +1,84 @@
+{
+	"info": {
+		"_postman_id": "3217379f-70eb-4f16-9b71-c7718aea924f",
+		"name": "ZipFileManager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "set LOCAL env",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "38eaeb49-2207-4c63-b840-e1f44a24e74d",
+						"exec": [
+							"postman.setEnvironmentVariable(\"zipFileManagerUrl\", \"http://localhost:3000\");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "/",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{zipFileManagerUrl}}/api/files",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "data",
+							"contentType": "",
+							"type": "file",
+							"src": [
+								"/Users/miha/Downloads/Lista zone afectate 15 05 2020.pdf",
+								"/Users/miha/Downloads/Coupon type EAN big.csv",
+								"/Users/miha/Downloads/Informare privind prelucrarea datelor personale PF (3) (1).PDF"
+							]
+						},
+						{
+							"key": "userName",
+							"value": "Kai",
+							"contentType": "",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{zipFileManagerUrl}}/api/docs",
+					"host": [
+						"{{zipFileManagerUrl}}"
+					],
+					"path": [
+						"api",
+						"docs"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
